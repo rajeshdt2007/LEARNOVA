@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { FluidContainer } from './components/layout/FluidContainer';
-import { HeaderNav } from './components/layout/HeaderNav';
-import { HeroFluidView } from './components/views/HeroFluidView';
-import { FacultyHubView } from './components/views/FacultyHubView';
+import { ModernDashboardContainer } from './components/layout/ModernDashboardContainer';
+import { ModernHeaderNav } from './components/layout/ModernHeaderNav';
+import { PanoramicHeroBanner } from './components/views/PanoramicHeroBanner';
+import { ModernWidgetGrid } from './components/views/ModernWidgetGrid';
+import { CourseContentView } from './components/views/CourseContentView';
+import { QuizRoomView } from './components/views/QuizRoomView';
 import { RiskRadarView } from './components/views/RiskRadarView';
 import { StudentPortalView } from './components/views/StudentPortalView';
 import { SystemHealthView } from './components/views/SystemHealthView';
-import { CourseContentView } from './components/views/CourseContentView';
-import { QuizRoomView } from './components/views/QuizRoomView';
 import { SearchModal } from './components/modals/SearchModal';
 import { AuthModal } from './components/modals/AuthModal';
 import { InterventionModal } from './components/modals/InterventionModal';
@@ -29,7 +29,6 @@ import {
   getCohortOverview,
   getStudentRoster,
   getInterventions,
-  checkBackendHealth,
   getNotes,
   getAssignments,
   getQuizzes,
@@ -50,13 +49,12 @@ export const App: React.FC = () => {
 
   const [currentUser, setCurrentUser] = useState<UserType | null>({
     id: "USR-FAC-01",
-    email: "sarah.jenkins@university.edu",
-    fullName: "Prof. Sarah Jenkins",
+    email: "jessica.smith@university.edu",
+    fullName: "Jessica Smith",
     role: "faculty",
     department: "Computer Science",
     institutionalId: "FAC-8891"
   });
-  const [apiOnline, setApiOnline] = useState<boolean | null>(null);
 
   // Modal states
   const [searchOpen, setSearchOpen] = useState(false);
@@ -76,12 +74,8 @@ export const App: React.FC = () => {
     studentName: '',
   });
 
-  // Load live data from FastAPI backend with automatic graceful fallback
+  // Load live data from backend with graceful fallback
   useEffect(() => {
-    checkBackendHealth()
-      .then(() => setApiOnline(true))
-      .catch(() => setApiOnline(false));
-
     getCohortOverview().then(data => setCohort(data));
     getStudentRoster().then(data => setStudents(data));
     getInterventions().then(data => setInterventions(data));
@@ -130,73 +124,84 @@ export const App: React.FC = () => {
   };
 
   return (
-    <FluidContainer>
-      {/* Master Top Navigation Bar with working menu options & search */}
-      <HeaderNav
+    <ModernDashboardContainer>
+      {/* Top Navigation Bar matching reference design */}
+      <ModernHeaderNav
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onOpenSearch={() => setSearchOpen(true)}
         onOpenAuth={() => setAuthOpen(true)}
         currentUser={currentUser}
-        apiOnline={apiOnline}
       />
 
-      {/* Dynamic Content Views based on active tab */}
-      <main className="flex-1">
+      {/* Dynamic Views based on active tab */}
+      <main className="space-y-5">
         {activeTab === 'overview' && (
-          <HeroFluidView
-            cohort={cohort}
-            onExplore={() => setActiveTab('course-content')}
-            setActiveTab={setActiveTab}
-          />
+          <>
+            {/* Wide Panoramic Hero Banner matching image */}
+            <PanoramicHeroBanner
+              cohort={cohort}
+              onExplore={() => setActiveTab('course-content')}
+            />
+
+            {/* 4-Column Modular Widget Grid matching image */}
+            <ModernWidgetGrid
+              setActiveTab={setActiveTab}
+              onOpenCreateNote={() => setCreateNoteOpen(true)}
+              onOpenCreateAssignment={() => setCreateAssignmentOpen(true)}
+              onOpenCreateQuiz={() => setCreateQuizOpen(true)}
+            />
+          </>
         )}
 
         {activeTab === 'course-content' && (
-          <CourseContentView
-            notes={notes}
-            assignments={assignments}
-            quizzes={quizzes}
-            currentUser={currentUser}
-            onOpenCreateNote={() => setCreateNoteOpen(true)}
-            onOpenCreateAssignment={() => setCreateAssignmentOpen(true)}
-            onOpenCreateQuiz={() => setCreateQuizOpen(true)}
-            onOpenSubmitAssignment={handleOpenSubmitAssignment}
-            onStartQuiz={handleStartQuiz}
-          />
+          <div className="bg-slate-900 rounded-[32px] overflow-hidden text-white">
+            <CourseContentView
+              notes={notes}
+              assignments={assignments}
+              quizzes={quizzes}
+              currentUser={currentUser}
+              onOpenCreateNote={() => setCreateNoteOpen(true)}
+              onOpenCreateAssignment={() => setCreateAssignmentOpen(true)}
+              onOpenCreateQuiz={() => setCreateQuizOpen(true)}
+              onOpenSubmitAssignment={handleOpenSubmitAssignment}
+              onStartQuiz={handleStartQuiz}
+            />
+          </div>
         )}
 
         {activeTab === 'quiz-room' && (
-          <QuizRoomView
-            quiz={activeQuiz || quizzes[0]}
-            currentUser={currentUser}
-            onExit={() => setActiveTab('course-content')}
-          />
-        )}
-
-        {activeTab === 'faculty' && (
-          <FacultyHubView
-            cohort={cohort}
-            setActiveTab={setActiveTab}
-            onSelectStudentForIntervention={handleOpenInterventionModal}
-          />
+          <div className="bg-slate-900 rounded-[32px] overflow-hidden text-white">
+            <QuizRoomView
+              quiz={activeQuiz || quizzes[0]}
+              currentUser={currentUser}
+              onExit={() => setActiveTab('overview')}
+            />
+          </div>
         )}
 
         {activeTab === 'risk-radar' && (
-          <RiskRadarView
-            students={students}
-            interventions={interventions}
-            onOpenInterventionModal={handleOpenInterventionModal}
-          />
+          <div className="bg-slate-900 rounded-[32px] overflow-hidden text-white">
+            <RiskRadarView
+              students={students}
+              interventions={interventions}
+              onOpenInterventionModal={handleOpenInterventionModal}
+            />
+          </div>
         )}
 
         {activeTab === 'student-portal' && (
-          <StudentPortalView
-            student={students[0]}
-          />
+          <div className="bg-slate-900 rounded-[32px] overflow-hidden text-white">
+            <StudentPortalView
+              student={students[0]}
+            />
+          </div>
         )}
 
         {activeTab === 'health' && (
-          <SystemHealthView />
+          <div className="bg-slate-900 rounded-[32px] overflow-hidden text-white">
+            <SystemHealthView />
+          </div>
         )}
       </main>
 
@@ -256,7 +261,7 @@ export const App: React.FC = () => {
           getAssignments().then(data => setAssignments(data));
         }}
       />
-    </FluidContainer>
+    </ModernDashboardContainer>
   );
 };
 
