@@ -21,6 +21,8 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
 }) => {
   const navItems: Array<{ id: ActiveTab; label: string; badge?: string }> = [
     { id: 'overview', label: 'Overview' },
+    { id: 'course-content', label: 'Course Materials', badge: 'New' },
+    { id: 'quiz-room', label: 'Quiz Room' },
     { id: 'faculty', label: 'Faculty Hub' },
     { id: 'risk-radar', label: 'Risk Radar', badge: 'Alerts' },
     { id: 'student-portal', label: 'Student Portal' },
