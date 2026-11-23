@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search } from 'lucide-react';
+import { Search, ArrowRight, GraduationCap, UserCheck } from 'lucide-react';
 import { ActiveTab, User as UserType } from '../../types';
 
 interface ModernHeaderNavProps {
@@ -7,6 +7,7 @@ interface ModernHeaderNavProps {
   setActiveTab: (tab: ActiveTab) => void;
   onOpenSearch: () => void;
   onOpenAuth: () => void;
+  onOpenContact: () => void;
   currentUser: UserType | null;
 }
 
@@ -15,98 +16,117 @@ export const ModernHeaderNav: React.FC<ModernHeaderNavProps> = ({
   setActiveTab,
   onOpenSearch,
   onOpenAuth,
+  onOpenContact,
   currentUser,
 }) => {
+  // Navigation tabs matching the exact menu in user's uploaded reference image
   const navTabs: Array<{ id: ActiveTab; label: string }> = [
-    { id: 'overview', label: 'Maps & Radar' },
-    { id: 'risk-radar', label: 'Severe Weather' },
-    { id: 'course-content', label: 'News & Blog' },
-    { id: 'quiz-room', label: 'Sensor Network' },
+    { id: 'overview', label: 'Home' },
+    { id: 'course-content', label: 'Classes' },
+    { id: 'resources', label: 'Resources' },
+    { id: 'risk-radar', label: 'Community' },
+    { id: 'health', label: 'About Us' },
   ];
 
+  const isHomeActive = activeTab === 'overview' || activeTab === 'home';
+
   return (
-    <nav className="flex items-center justify-between py-2 px-1">
-      {/* Left: Minimalist Emblem Logo matching image */}
+    <nav className="flex items-center justify-between py-2 sm:py-3 px-1 border-b border-purple-50/60 pb-4">
+      {/* Left: Purple Geometric 3D Cube / Prism Logo matching attached image */}
       <div className="flex items-center gap-3">
         <button
           onClick={() => setActiveTab('overview')}
-          className="flex items-center gap-2 group text-slate-900"
-          title="Return to Dashboard Overview"
+          className="flex items-center gap-2.5 group text-slate-900 focus:outline-none"
+          title="LEARNOVA Platform Home"
         >
-          {/* Bird/Wing minimalist outline icon matching attached image */}
-          <div className="w-8 h-8 flex items-center justify-center text-slate-900 group-hover:scale-105 transition-transform">
-            <svg
-              className="w-7 h-7"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M18 10c0-4-3-7-7-7a7 7 0 0 0-7 7c0 2 1 4 3 5 0 2-1 4-3 5 5 1 10-1 12-4 1.5-.5 3-2 3-5 0-.5 0-1-.2-1.5" />
+          {/* Isometric faceted cube logo in purple/indigo gradient */}
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#5B4BD8] via-[#6C5CE7] to-[#A29BFE] flex items-center justify-center shadow-md shadow-purple-500/25 group-hover:scale-105 transition-transform p-1.5">
+            <svg viewBox="0 0 24 24" fill="none" className="w-full h-full text-white">
+              <path
+                d="M12 2L21 7.2V16.8L12 22L3 16.8V7.2L12 2Z"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="rgba(255,255,255,0.15)"
+              />
+              <path
+                d="M12 22V12"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M21 7.2L12 12L3 7.2"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </div>
-          <span className="font-bold text-sm tracking-tight text-slate-800">
+          <span className="font-extrabold text-lg sm:text-xl tracking-tight text-slate-900 group-hover:text-[#5B4BD8] transition-colors">
             LEARNOVA
           </span>
         </button>
       </div>
 
-      {/* Center: Clean Text Navigation Tabs */}
+      {/* Center: Clean Text Navigation Tabs with active purple bottom bar */}
       <div className="hidden md:flex items-center gap-8">
         {navTabs.map((tab) => {
-          const isActive = activeTab === tab.id;
+          const isActive = tab.id === 'overview' ? isHomeActive : activeTab === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`text-xs font-semibold tracking-normal transition-colors relative py-1 ${
+              className={`text-sm font-semibold tracking-normal transition-all relative py-1 focus:outline-none ${
                 isActive
-                  ? 'text-slate-900 font-bold'
+                  ? 'text-slate-950 font-bold'
                   : 'text-slate-500 hover:text-slate-900'
               }`}
             >
               {tab.label}
               {isActive && (
-                <span className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 rounded-full bg-slate-900" />
+                <span className="absolute -bottom-1.5 left-1/2 transform -translate-x-1/2 w-7 h-1 rounded-full bg-[#5B4BD8] transition-all" />
               )}
             </button>
           );
         })}
       </div>
 
-      {/* Right: User Welcome Pill & Search Icon */}
-      <div className="flex items-center gap-4">
-        {/* User Profile Pill matching image */}
-        <button
-          onClick={onOpenAuth}
-          className="flex items-center gap-2.5 pl-2 pr-1 py-1 rounded-full hover:bg-slate-100 transition-colors group"
-          title="Switch User Role / Identity"
-        >
-          <div className="text-right">
-            <div className="text-[10px] text-slate-400 font-normal leading-tight">Welcome</div>
-            <div className="text-xs font-bold text-slate-800 group-hover:text-blue-600 transition-colors">
-              {currentUser ? currentUser.fullName : 'Jessica Smith'}
-            </div>
-          </div>
-          {/* User circular avatar */}
-          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-400 to-rose-400 border border-white shadow-sm flex items-center justify-center overflow-hidden">
-            <img
-              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80"
-              alt="User Avatar"
-              className="w-full h-full object-cover"
-            />
-          </div>
-        </button>
-
-        {/* Minimal Search Button matching image */}
+      {/* Right: Contact Us Button, Role Pill, and Search Icon */}
+      <div className="flex items-center gap-3">
+        {/* Search shortcut button (⌘K) */}
         <button
           onClick={onOpenSearch}
-          className="w-8 h-8 rounded-full flex items-center justify-center text-slate-800 hover:bg-slate-100 transition-colors"
-          title="Search courses, students, and content (⌘K)"
+          className="w-9 h-9 rounded-full flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+          title="Search platform (⌘K)"
         >
           <Search className="w-4 h-4" />
+        </button>
+
+        {/* User Identity / Role Pill */}
+        <button
+          onClick={onOpenAuth}
+          className="hidden sm:flex items-center gap-2 pl-2 pr-3 py-1 rounded-full bg-purple-50/80 hover:bg-purple-100/80 border border-purple-100 transition-all text-xs text-slate-700"
+          title="Toggle Student or Faculty Session"
+        >
+          <div className="w-6 h-6 rounded-full bg-[#5B4BD8] text-white flex items-center justify-center text-[10px] font-bold">
+            {currentUser?.role === 'faculty' ? <GraduationCap className="w-3.5 h-3.5" /> : <UserCheck className="w-3.5 h-3.5" />}
+          </div>
+          <span className="font-semibold text-slate-800">
+            {currentUser?.role === 'faculty' ? 'Faculty Portal' : 'Student View'}
+          </span>
+        </button>
+
+        {/* Purple Pill "Contact Us →" button matching reference image */}
+        <button
+          onClick={onOpenContact}
+          className="bg-[#5B4BD8] hover:bg-[#4D3EC4] text-white font-medium text-xs sm:text-sm px-5 py-2.5 rounded-full flex items-center gap-1.5 shadow-md shadow-purple-600/20 active:scale-95 transition-all"
+        >
+          <span>Contact Us</span>
+          <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         </button>
       </div>
     </nav>

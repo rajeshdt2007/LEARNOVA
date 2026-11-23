@@ -174,4 +174,16 @@ export interface QuizAttemptResult {
   attemptedAt: string;
 }
 
-export type ActiveTab = 'overview' | 'faculty' | 'course-content' | 'quiz-room' | 'risk-radar' | 'student-portal' | 'health';
+export type ActiveTab = 
+  | 'home' 
+  | 'classes' 
+  | 'resources' 
+  | 'community' 
+  | 'about' 
+  | 'overview' 
+  | 'faculty' 
+  | 'course-content' 
+  | 'quiz-room' 
+  | 'risk-radar' 
+  | 'student-portal' 
+  | 'health';

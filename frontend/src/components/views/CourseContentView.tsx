@@ -8,7 +8,6 @@ import {
   PlusCircle,
   Download,
   Send,
-  HelpCircle,
   ArrowRight,
   Sparkles
 } from 'lucide-react';
@@ -37,16 +36,16 @@ export const CourseContentView: React.FC<CourseContentViewProps> = ({
   onOpenSubmitAssignment,
   onStartQuiz,
 }) => {
-  const [activeSection, setActiveSection] = useState<'notes' | 'assignments' | 'quizzes'>('notes');
+  const [activeSection, setActiveSection] = useState<'all' | 'notes' | 'assignments' | 'quizzes'>('all');
   const [selectedCourseFilter, setSelectedCourseFilter] = useState<string>('ALL');
 
   const isTeacher = currentUser?.role === 'faculty' || currentUser?.role === 'admin' || !currentUser;
 
   const coursesList = [
     { id: 'ALL', name: 'All Enrolled Courses' },
-    { id: 'CRS-101', name: 'CS 101 - Algorithms' },
-    { id: 'CRS-204', name: 'MATH 204 - Calculus' },
-    { id: 'CRS-402', name: 'AI 402 - Machine Learning' },
+    { id: 'CRS-101', name: 'CS 101 - Algorithms & Data Structures' },
+    { id: 'CRS-204', name: 'MATH 204 - Multivariable Calculus' },
+    { id: 'CRS-402', name: 'AI 402 - Machine Learning Foundations' },
   ];
 
   const filteredNotes = selectedCourseFilter === 'ALL'
@@ -62,19 +61,19 @@ export const CourseContentView: React.FC<CourseContentViewProps> = ({
     : quizzes.filter(q => q.courseId === selectedCourseFilter);
 
   return (
-    <div className="p-6 sm:p-10 space-y-8 select-none">
-      {/* Header with Role Status & Push Buttons */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
+    <div className="p-6 sm:p-8 space-y-6 select-none">
+      {/* Header with Title & Teacher Action Push Triggers */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-purple-50">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 text-xs font-semibold mb-2">
-            <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
-            Curriculum Content & Evaluation Center
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F0EDFD] text-[#5B4BD8] text-xs font-semibold mb-2">
+            <BookOpen className="w-3.5 h-3.5 text-[#5B4BD8]" />
+            Curriculum Classes & Evaluation Center
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Course Materials, Assignments & Quizzes
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            Academic Classes, Materials & Quizzes
           </h2>
-          <p className="text-xs sm:text-sm text-slate-300 mt-1">
-            Faculty push lecture notes, problem sets, and interactive quizzes for student coursework.
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            Faculty manage curriculum content, assignments, and diagnostic tests. Students attempt quizzes and submit projects.
           </p>
         </div>
 
@@ -83,178 +82,146 @@ export const CourseContentView: React.FC<CourseContentViewProps> = ({
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={onOpenCreateNote}
-              className="px-3.5 py-2 rounded-xl bg-cyan-950/60 hover:bg-cyan-900 border border-cyan-400/40 text-cyan-300 hover:text-white text-xs font-semibold transition-all flex items-center gap-1.5 active:scale-95 shadow-md shadow-cyan-950/50"
+              className="px-3.5 py-2 rounded-full bg-white hover:bg-purple-50 border border-purple-200 text-[#5B4BD8] text-xs font-semibold transition-all flex items-center gap-1.5 active:scale-95 shadow-sm"
             >
-              <PlusCircle className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Push Note</span>
+              <PlusCircle className="w-3.5 h-3.5 text-[#5B4BD8]" />
+              <span>+ Push Note</span>
             </button>
             <button
               onClick={onOpenCreateAssignment}
-              className="px-3.5 py-2 rounded-xl bg-purple-950/60 hover:bg-purple-900 border border-purple-400/40 text-purple-300 hover:text-white text-xs font-semibold transition-all flex items-center gap-1.5 active:scale-95 shadow-md shadow-purple-950/50"
+              className="px-3.5 py-2 rounded-full bg-white hover:bg-purple-50 border border-purple-200 text-[#5B4BD8] text-xs font-semibold transition-all flex items-center gap-1.5 active:scale-95 shadow-sm"
             >
-              <UploadCloud className="w-3.5 h-3.5 text-purple-400" />
-              <span>Push Assignment</span>
+              <UploadCloud className="w-3.5 h-3.5 text-[#5B4BD8]" />
+              <span>+ Push Assignment</span>
             </button>
             <button
               onClick={onOpenCreateQuiz}
-              className="px-3.5 py-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900 border border-emerald-400/40 text-emerald-300 hover:text-white text-xs font-semibold transition-all flex items-center gap-1.5 active:scale-95 shadow-md shadow-emerald-950/50"
+              className="px-4 py-2 rounded-full bg-[#5B4BD8] hover:bg-[#4D3EC4] text-white text-xs font-semibold transition-all flex items-center gap-1.5 active:scale-95 shadow-md shadow-purple-500/20"
             >
-              <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Push Quiz</span>
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>+ Create Quiz</span>
             </button>
           </div>
         )}
       </div>
 
-      {/* Course Filter & Sub-section Tabs */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-slate-900/60 p-2.5 rounded-2xl border border-white/10 backdrop-blur-md">
-        {/* Navigation Tabs */}
-        <div className="flex items-center gap-1 bg-black/40 p-1 rounded-xl border border-white/10 text-xs">
+      {/* Course Filter Dropdown & Section Switcher */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        {/* Section Tabs */}
+        <div className="flex items-center gap-2 p-1 bg-slate-100/80 rounded-2xl w-full sm:w-auto">
           <button
-            onClick={() => setActiveSection('notes')}
-            className={`px-4 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5 ${
-              activeSection === 'notes'
-                ? 'bg-cyan-500/30 text-cyan-300 font-semibold border border-cyan-400/30'
-                : 'text-slate-400 hover:text-white'
+            onClick={() => setActiveSection('all')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+              activeSection === 'all'
+                ? 'bg-white text-slate-900 shadow-sm'
+                : 'text-slate-500 hover:text-slate-900'
             }`}
           >
-            <FileText className="w-3.5 h-3.5" />
-            <span>Lecture Notes ({filteredNotes.length})</span>
-          </button>
-          <button
-            onClick={() => setActiveSection('assignments')}
-            className={`px-4 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5 ${
-              activeSection === 'assignments'
-                ? 'bg-purple-500/30 text-purple-300 font-semibold border border-purple-400/30'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <Calendar className="w-3.5 h-3.5" />
-            <span>Assignments ({filteredAssignments.length})</span>
+            All Coursework
           </button>
           <button
             onClick={() => setActiveSection('quizzes')}
-            className={`px-4 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5 ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
               activeSection === 'quizzes'
-                ? 'bg-emerald-500/30 text-emerald-300 font-semibold border border-emerald-400/30'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-white text-slate-900 shadow-sm'
+                : 'text-slate-500 hover:text-slate-900'
             }`}
           >
-            <HelpCircle className="w-3.5 h-3.5" />
-            <span>Quizzes ({filteredQuizzes.length})</span>
+            <span>Quizzes</span>
+            <span className="px-1.5 py-0.5 rounded-full bg-purple-100 text-[#5B4BD8] text-[10px]">
+              {quizzes.length}
+            </span>
+          </button>
+          <button
+            onClick={() => setActiveSection('assignments')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+              activeSection === 'assignments'
+                ? 'bg-white text-slate-900 shadow-sm'
+                : 'text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <span>Assignments</span>
+            <span className="px-1.5 py-0.5 rounded-full bg-purple-100 text-[#5B4BD8] text-[10px]">
+              {assignments.length}
+            </span>
+          </button>
+          <button
+            onClick={() => setActiveSection('notes')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+              activeSection === 'notes'
+                ? 'bg-white text-slate-900 shadow-sm'
+                : 'text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <span>Notes</span>
+            <span className="px-1.5 py-0.5 rounded-full bg-purple-100 text-[#5B4BD8] text-[10px]">
+              {notes.length}
+            </span>
           </button>
         </div>
 
-        {/* Course Dropdown */}
-        <div className="flex items-center gap-2 text-xs">
-          <span className="text-slate-400 text-[11px]">Course:</span>
-          <select
-            value={selectedCourseFilter}
-            onChange={(e) => setSelectedCourseFilter(e.target.value)}
-            className="bg-black/40 border border-white/10 rounded-xl px-3 py-1.5 text-white text-xs focus:outline-none focus:border-cyan-400"
-          >
-            {coursesList.map(c => (
-              <option key={c.id} value={c.id} className="bg-slate-900 text-white">
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        {/* Course Filter Dropdown */}
+        <select
+          value={selectedCourseFilter}
+          onChange={(e) => setSelectedCourseFilter(e.target.value)}
+          className="w-full sm:w-auto px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#5B4BD8] bg-white shadow-sm"
+        >
+          {coursesList.map((crs) => (
+            <option key={crs.id} value={crs.id}>
+              {crs.name}
+            </option>
+          ))}
+        </select>
       </div>
 
-      {/* ----------------------------------------------------------------- */}
-      {/* SECTION 1: LECTURE NOTES */}
-      {/* ----------------------------------------------------------------- */}
-      {activeSection === 'notes' && (
+      {/* 
+        Section: Interactive Quizzes
+      */}
+      {(activeSection === 'all' || activeSection === 'quizzes') && (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredNotes.map((note) => (
-              <div
-                key={note.id}
-                className="p-5 rounded-2xl bg-slate-900/70 border border-white/10 hover:border-cyan-400/40 backdrop-blur-md transition-all flex flex-col justify-between space-y-4"
-              >
-                <div className="space-y-2">
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-cyan-950/80 text-cyan-300 border border-cyan-500/30">
-                      {note.courseName.split(' - ')[0]}
-                    </span>
-                    <span className="text-[10px] text-slate-400">
-                      {new Date(note.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
-
-                  <h3 className="text-base font-bold text-white tracking-tight">
-                    {note.title}
-                  </h3>
-
-                  <p className="text-xs text-slate-300 leading-relaxed">
-                    {note.content}
-                  </p>
-                </div>
-
-                <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs">
-                  <span className="text-slate-400 text-[11px]">Author: {note.author}</span>
-                  {note.attachmentUrl && (
-                    <a
-                      href={note.attachmentUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-cyan-300 text-xs font-semibold flex items-center gap-1.5 transition-colors"
-                    >
-                      <Download className="w-3.5 h-3.5" />
-                      <span>Download PDF</span>
-                    </a>
-                  )}
-                </div>
-              </div>
-            ))}
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-[#5B4BD8]" />
+              <span>Interactive Diagnostic Quizzes ({filteredQuizzes.length})</span>
+            </h3>
+            <span className="text-xs text-slate-500">Instant AI & faculty scoring</span>
           </div>
-        </div>
-      )}
 
-      {/* ----------------------------------------------------------------- */}
-      {/* SECTION 2: ASSIGNMENTS */}
-      {/* ----------------------------------------------------------------- */}
-      {activeSection === 'assignments' && (
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredAssignments.map((asg) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredQuizzes.map((quiz) => (
               <div
-                key={asg.id}
-                className="p-5 rounded-2xl bg-slate-900/70 border border-white/10 hover:border-purple-400/40 backdrop-blur-md transition-all flex flex-col justify-between space-y-4"
+                key={quiz.id}
+                className="p-5 rounded-2xl bg-white border border-purple-100/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4 group"
               >
-                <div className="space-y-2">
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-purple-950/80 text-purple-300 border border-purple-500/30">
-                      {asg.courseName.split(' - ')[0]}
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="px-2.5 py-0.5 rounded-full bg-purple-50 text-[#5B4BD8] text-[10px] font-bold">
+                      {quiz.courseName}
                     </span>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      Due {asg.dueDate}
+                    <span className="text-xs text-slate-400 flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5" />
+                      {quiz.durationMinutes} mins
                     </span>
                   </div>
 
-                  <h3 className="text-base font-bold text-white tracking-tight">
-                    {asg.title}
-                  </h3>
-
-                  <p className="text-xs text-slate-300 leading-relaxed">
-                    {asg.description}
+                  <h4 className="font-bold text-base text-slate-900 group-hover:text-[#5B4BD8] transition-colors">
+                    {quiz.title}
+                  </h4>
+                  <p className="text-xs text-slate-600 line-clamp-2">
+                    {quiz.description}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs">
-                  <div className="text-slate-400 text-[11px]">
-                    <span>Points: <strong className="text-white">{asg.points}</strong></span> • 
-                    <span className="ml-1 text-purple-300">{asg.submissionsCount} Submissions</span>
-                  </div>
-
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-[11px] font-semibold text-slate-500">
+                    {quiz.questions.length} questions
+                  </span>
                   <button
-                    onClick={() => onOpenSubmitAssignment(asg)}
-                    className="px-3.5 py-1.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 border border-purple-400/40 text-purple-200 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95"
+                    onClick={() => onStartQuiz(quiz)}
+                    className="px-4 py-2 rounded-full bg-[#5B4BD8] hover:bg-[#4D3EC4] text-white text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-purple-500/20 active:scale-95 transition-all"
                   >
-                    <Send className="w-3.5 h-3.5" />
-                    <span>Submit Work</span>
+                    <span>Attempt Quiz</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
@@ -263,46 +230,116 @@ export const CourseContentView: React.FC<CourseContentViewProps> = ({
         </div>
       )}
 
-      {/* ----------------------------------------------------------------- */}
-      {/* SECTION 3: QUIZZES */}
-      {/* ----------------------------------------------------------------- */}
-      {activeSection === 'quizzes' && (
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredQuizzes.map((quiz) => (
+      {/* 
+        Section: Assignments
+      */}
+      {(activeSection === 'all' || activeSection === 'assignments') && (
+        <div className="space-y-4 pt-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <UploadCloud className="w-4 h-4 text-[#5B4BD8]" />
+              <span>Course Assignments & Project Briefs ({filteredAssignments.length})</span>
+            </h3>
+            <span className="text-xs text-slate-500">Verified institutional grading</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredAssignments.map((asg) => (
               <div
-                key={quiz.id}
-                className="p-5 rounded-2xl bg-slate-900/70 border border-white/10 hover:border-emerald-400/40 backdrop-blur-md transition-all flex flex-col justify-between space-y-4"
+                key={asg.id}
+                className="p-5 rounded-2xl bg-white border border-purple-100/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4 group"
               >
-                <div className="space-y-2">
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-emerald-950/80 text-emerald-300 border border-emerald-500/30">
-                      {quiz.courseName.split(' - ')[0]}
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-[10px] font-bold">
+                      {asg.courseName}
                     </span>
-                    <span className="text-[10px] text-slate-400 flex items-center gap-1">
-                      <Clock className="w-3 h-3 text-cyan-400" />
-                      {quiz.durationMinutes} min • {quiz.questions.length} Questions
+                    <span className="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
+                      {asg.points} pts
                     </span>
                   </div>
 
-                  <h3 className="text-base font-bold text-white tracking-tight">
-                    {quiz.title}
-                  </h3>
-
-                  <p className="text-xs text-slate-300 leading-relaxed">
-                    {quiz.description}
+                  <h4 className="font-bold text-base text-slate-900 group-hover:text-[#5B4BD8] transition-colors">
+                    {asg.title}
+                  </h4>
+                  <p className="text-xs text-slate-600 line-clamp-2">
+                    {asg.description}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs">
-                  <span className="text-slate-400 text-[11px]">{quiz.attemptsCount} Student Attempts</span>
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-[11px] text-slate-400 flex items-center gap-1">
+                    <Calendar className="w-3 h-3" />
+                    Due: {asg.dueDate}
+                  </span>
 
                   <button
-                    onClick={() => onStartQuiz(quiz)}
-                    className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all active:scale-95 shadow-md shadow-emerald-950/50"
+                    onClick={() => onOpenSubmitAssignment(asg)}
+                    className="px-4 py-2 rounded-full bg-slate-900 hover:bg-[#5B4BD8] text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm active:scale-95 transition-all"
                   >
-                    <span>Attempt Quiz</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <Send className="w-3.5 h-3.5" />
+                    <span>Submit</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 
+        Section: Lecture Notes
+      */}
+      {(activeSection === 'all' || activeSection === 'notes') && (
+        <div className="space-y-4 pt-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <FileText className="w-4 h-4 text-[#5B4BD8]" />
+              <span>Lecture Notes & Reference Slides ({filteredNotes.length})</span>
+            </h3>
+            <span className="text-xs text-slate-500">Free download for enrolled cohort</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredNotes.map((note) => (
+              <div
+                key={note.id}
+                className="p-5 rounded-2xl bg-white border border-purple-100/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4 group"
+              >
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="px-2.5 py-0.5 rounded-full bg-purple-50 text-[#5B4BD8] text-[10px] font-bold">
+                      {note.courseName}
+                    </span>
+                    <span className="text-[11px] text-slate-400">
+                      {note.createdAt}
+                    </span>
+                  </div>
+
+                  <h4 className="font-bold text-base text-slate-900 group-hover:text-[#5B4BD8] transition-colors">
+                    {note.title}
+                  </h4>
+                  <p className="text-xs text-slate-600 line-clamp-3">
+                    {note.content}
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-[11px] text-slate-500">
+                    By {note.author}
+                  </span>
+                  <button
+                    onClick={() => {
+                      const element = document.createElement("a");
+                      const file = new Blob([`# ${note.title}\n\n${note.content}`], {type: 'text/plain'});
+                      element.href = URL.createObjectURL(file);
+                      element.download = `${note.title.replace(/\s+/g, '_')}.txt`;
+                      element.click();
+                    }}
+                    className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-[#5B4BD8] text-[#5B4BD8] hover:text-white text-xs font-semibold flex items-center gap-1 transition-all"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Download</span>
                   </button>
                 </div>
               </div>

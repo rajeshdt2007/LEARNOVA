@@ -6,7 +6,8 @@ import {
   ArrowRight,
   ArrowLeft,
   RotateCcw,
-  Award
+  Award,
+  Sparkles
 } from 'lucide-react';
 import { Quiz, QuizAttemptResult, User as UserType } from '../../types';
 import { attemptQuiz } from '../../lib/api';
@@ -29,17 +30,17 @@ export const QuizRoomView: React.FC<QuizRoomViewProps> = ({
 
   if (!quiz) {
     return (
-      <div className="p-12 text-center space-y-4">
-        <HelpCircle className="w-12 h-12 text-slate-500 mx-auto" />
-        <h3 className="text-lg font-bold text-white">No Quiz Selected</h3>
-        <p className="text-xs text-slate-400">
-          Please select a quiz from the Course Content tab to begin your test.
+      <div className="p-12 text-center space-y-4 bg-white rounded-3xl border border-purple-100">
+        <HelpCircle className="w-12 h-12 text-purple-400 mx-auto" />
+        <h3 className="text-lg font-bold text-slate-900">No Quiz Selected</h3>
+        <p className="text-xs text-slate-500">
+          Please select an interactive quiz from the Classes or Home tab to begin your test.
         </p>
         <button
           onClick={onExit}
-          className="px-4 py-2 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-xs font-semibold"
+          className="px-5 py-2.5 rounded-full bg-[#5B4BD8] text-white text-xs font-semibold shadow-md shadow-purple-500/20"
         >
-          Return to Course Content
+          Return to Classes
         </button>
       </div>
     );
@@ -50,7 +51,7 @@ export const QuizRoomView: React.FC<QuizRoomViewProps> = ({
   const progressPercentage = ((currentQuestionIndex + 1) / totalQuestions) * 100;
 
   const handleSelectOption = (optionIndex: number) => {
-    if (result) return; // locked after submission
+    if (result) return;
     const updated = [...selectedAnswers];
     updated[currentQuestionIndex] = optionIndex;
     setSelectedAnswers(updated);
@@ -87,172 +88,149 @@ export const QuizRoomView: React.FC<QuizRoomViewProps> = ({
   };
 
   return (
-    <div className="p-6 sm:p-10 space-y-8 select-none max-w-3xl mx-auto">
+    <div className="p-6 sm:p-10 space-y-6 select-none max-w-3xl mx-auto bg-white rounded-3xl border border-purple-100 shadow-sm">
       {/* Header with Title and Timer */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-purple-50">
         <div>
-          <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-300 bg-cyan-950/80 px-2 py-0.5 rounded border border-cyan-500/30">
+          <span className="text-xs font-bold uppercase tracking-wider text-[#5B4BD8] bg-purple-50 px-2.5 py-1 rounded-full border border-purple-100">
             {quiz.courseName}
           </span>
-          <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight mt-1">
+          <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight mt-2">
             {quiz.title}
           </h2>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="px-3.5 py-1.5 rounded-xl bg-slate-900/60 border border-white/10 text-right flex items-center gap-2">
-            <Clock className="w-4 h-4 text-cyan-400" />
-            <span className="text-xs font-mono font-bold text-white">
-              {quiz.durationMinutes}:00 Min Limit
-            </span>
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
+            <Clock className="w-3.5 h-3.5 text-purple-600" />
+            <span>{quiz.durationMinutes} min timed</span>
           </div>
           <button
             onClick={onExit}
-            className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white text-xs font-semibold transition-colors"
+            className="text-xs font-semibold text-slate-400 hover:text-slate-800 transition-colors"
           >
-            Exit Room
+            Exit Exam
           </button>
         </div>
       </div>
 
-      {/* Result Card when Quiz is Completed */}
+      {/* Progress Bar */}
+      <div className="space-y-1.5">
+        <div className="flex justify-between text-xs font-bold text-slate-500">
+          <span>Question {currentQuestionIndex + 1} of {totalQuestions}</span>
+          <span className="text-[#5B4BD8]">{Math.round(progressPercentage)}% completed</span>
+        </div>
+        <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+          <div
+            className="bg-[#5B4BD8] h-full rounded-full transition-all duration-300"
+            style={{ width: `${progressPercentage}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Result Card if submitted */}
       {result ? (
-        <div className="p-6 rounded-3xl bg-slate-900/80 border border-white/20 backdrop-blur-md space-y-6 text-center animate-in fade-in zoom-in-95 duration-200">
-          <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto text-2xl font-black ${
-            result.passed
-              ? 'bg-emerald-500/20 text-emerald-300 border-2 border-emerald-400'
-              : 'bg-amber-500/20 text-amber-300 border-2 border-amber-400'
-          }`}>
-            <Award className="w-8 h-8" />
+        <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-b from-purple-50 to-white border border-purple-200 text-center space-y-4">
+          <div className="w-14 h-14 rounded-full bg-purple-100 text-[#5B4BD8] flex items-center justify-center mx-auto shadow-inner">
+            <Award className="w-7 h-7" />
           </div>
 
-          <div className="space-y-1">
-            <h3 className="text-2xl font-extrabold text-white">
-              Quiz Evaluation: {result.percentage}%
+          <div>
+            <span className="text-xs font-bold uppercase tracking-wider text-[#5B4BD8]">
+              Diagnostic Evaluation Complete
+            </span>
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">
+              Score: {result.score} / {result.totalQuestions} ({result.percentage}%)
             </h3>
-            <p className="text-xs text-slate-300">
-              You correctly answered <strong className="text-cyan-300">{result.score}</strong> out of <strong className="text-white">{result.totalQuestions}</strong> questions.
-            </p>
-            <div className="pt-2">
-              <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${
-                result.passed
-                  ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/40'
-                  : 'bg-amber-950 text-amber-300 border border-amber-500/40'
-              }`}>
-                {result.passed ? 'PASSED & RECORDED TO GRADEBOOK' : 'REVIEW CONCEPTS & RETRY'}
-              </span>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-black/40 border border-white/10 text-xs text-slate-300 text-left space-y-2">
-            <div className="font-semibold text-white">Concept Diagnostic Feedback:</div>
-            <p className="text-slate-400">
-              Your results have been automatically synchronized with the Faculty Analytics Radar for {quiz.courseName}.
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              {result.passed
+                ? 'Congratulations! You demonstrated strong mastery of the curriculum material.'
+                : 'Review the lecture notes and re-attempt to solidify core concepts.'}
             </p>
           </div>
 
           <div className="flex items-center justify-center gap-3 pt-2">
             <button
               onClick={handleRetake}
-              className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors"
+              className="px-5 py-2.5 rounded-full bg-white hover:bg-purple-50 text-[#5B4BD8] border border-purple-200 text-xs font-semibold flex items-center gap-1.5 shadow-sm active:scale-95 transition-all"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Retake Quiz</span>
             </button>
             <button
               onClick={onExit}
-              className="px-5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition-colors"
+              className="px-6 py-2.5 rounded-full bg-[#5B4BD8] hover:bg-[#4D3EC4] text-white text-xs font-semibold shadow-md shadow-purple-500/20 active:scale-95 transition-all"
             >
-              Return to Courses
+              Back to Classes
             </button>
           </div>
         </div>
       ) : (
-        /* Active Question Card */
-        <div className="p-6 rounded-3xl bg-slate-900/80 border border-white/20 backdrop-blur-md space-y-6">
-          {/* Progress Bar */}
-          <div className="space-y-1.5">
-            <div className="flex justify-between text-xs text-slate-400">
-              <span>Question {currentQuestionIndex + 1} of {totalQuestions}</span>
-              <span>{Math.round(progressPercentage)}% Complete</span>
-            </div>
-            <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
-              <div
-                className="bg-cyan-400 h-full transition-all duration-300"
-                style={{ width: `${progressPercentage}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Question Text */}
-          <div className="py-2">
-            <h3 className="text-base sm:text-lg font-bold text-white leading-relaxed">
+        /* Active Question & Options */
+        <div className="space-y-6">
+          <div className="p-5 rounded-2xl bg-[#FAF9FE] border border-purple-100">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
               {currentQ.question}
             </h3>
           </div>
 
-          {/* Options List */}
-          <div className="space-y-2.5">
-            {currentQ.options.map((option, optIdx) => {
-              const isSelected = selectedAnswers[currentQuestionIndex] === optIdx;
+          {/* Options */}
+          <div className="space-y-3">
+            {currentQ.options.map((option, idx) => {
+              const isSelected = selectedAnswers[currentQuestionIndex] === idx;
               return (
                 <button
-                  key={optIdx}
-                  onClick={() => handleSelectOption(optIdx)}
-                  className={`w-full p-3.5 rounded-2xl border text-left text-xs transition-all flex items-center justify-between group active:scale-99 ${
+                  key={idx}
+                  onClick={() => handleSelectOption(idx)}
+                  className={`w-full p-4 rounded-xl border text-left transition-all flex items-center justify-between ${
                     isSelected
-                      ? 'bg-cyan-950/60 border-cyan-400 text-white shadow-lg shadow-cyan-950/50'
-                      : 'bg-black/30 border-white/10 hover:border-white/30 text-slate-300'
+                      ? 'bg-purple-50/80 border-[#5B4BD8] shadow-sm text-slate-900 ring-2 ring-purple-100'
+                      : 'bg-white border-slate-200 text-slate-700 hover:border-purple-200 hover:bg-purple-50/20'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className={`w-6 h-6 rounded-lg flex items-center justify-center font-mono text-xs font-bold ${
+                    <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold ${
                       isSelected
-                        ? 'bg-cyan-400 text-slate-950'
-                        : 'bg-white/10 text-slate-400 group-hover:text-white'
+                        ? 'bg-[#5B4BD8] text-white'
+                        : 'bg-slate-100 text-slate-600'
                     }`}>
-                      {String.fromCharCode(65 + optIdx)}
+                      {String.fromCharCode(65 + idx)}
                     </span>
-                    <span>{option}</span>
+                    <span className="text-sm font-medium">{option}</span>
                   </div>
-
-                  <span className={`w-4 h-4 rounded-full border flex items-center justify-center ${
-                    isSelected ? 'border-cyan-400 bg-cyan-400' : 'border-slate-500'
-                  }`}>
-                    {isSelected && <span className="w-2 h-2 rounded-full bg-slate-950" />}
-                  </span>
+                  {isSelected && <CheckCircle2 className="w-4 h-4 text-[#5B4BD8]" />}
                 </button>
               );
             })}
           </div>
 
           {/* Navigation Controls */}
-          <div className="flex items-center justify-between pt-4 border-t border-white/10">
+          <div className="flex items-center justify-between pt-4 border-t border-slate-100">
             <button
               onClick={handlePrev}
               disabled={currentQuestionIndex === 0}
-              className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed text-white text-xs font-semibold flex items-center gap-1.5 transition-colors"
+              className="px-4 py-2 rounded-full border border-slate-200 text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-50 text-xs font-semibold flex items-center gap-1.5 transition-all"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Previous</span>
             </button>
 
-            {currentQuestionIndex < totalQuestions - 1 ? (
-              <button
-                onClick={handleNext}
-                className="px-5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-colors"
-              >
-                <span>Next Question</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            ) : (
+            {currentQuestionIndex === totalQuestions - 1 ? (
               <button
                 onClick={handleSubmitQuiz}
                 disabled={submitting}
-                className="px-6 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs flex items-center gap-1.5 transition-all active:scale-95 shadow-lg shadow-emerald-500/20"
+                className="px-6 py-2.5 rounded-full bg-[#5B4BD8] hover:bg-[#4D3EC4] text-white text-xs font-semibold flex items-center gap-2 shadow-md shadow-purple-500/20 active:scale-95 transition-all"
               >
-                <span>{submitting ? 'Scoring...' : 'Submit Quiz for Grading'}</span>
-                <CheckCircle2 className="w-3.5 h-3.5" />
+                {submitting ? 'Submitting...' : 'Submit Answers'}
+                <Sparkles className="w-3.5 h-3.5" />
+              </button>
+            ) : (
+              <button
+                onClick={handleNext}
+                className="px-5 py-2 rounded-full bg-slate-900 hover:bg-[#5B4BD8] text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm active:scale-95 transition-all"
+              >
+                <span>Next</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </button>
             )}
           </div>

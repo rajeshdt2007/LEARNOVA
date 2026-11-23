@@ -4,12 +4,14 @@ import { ModernHeaderNav } from './components/layout/ModernHeaderNav';
 import { PanoramicHeroBanner } from './components/views/PanoramicHeroBanner';
 import { ModernWidgetGrid } from './components/views/ModernWidgetGrid';
 import { CourseContentView } from './components/views/CourseContentView';
+import { ResourcesView } from './components/views/ResourcesView';
 import { QuizRoomView } from './components/views/QuizRoomView';
 import { RiskRadarView } from './components/views/RiskRadarView';
 import { StudentPortalView } from './components/views/StudentPortalView';
 import { SystemHealthView } from './components/views/SystemHealthView';
 import { SearchModal } from './components/modals/SearchModal';
 import { AuthModal } from './components/modals/AuthModal';
+import { ContactModal } from './components/modals/ContactModal';
 import { InterventionModal } from './components/modals/InterventionModal';
 import { CreateNoteModal } from './components/modals/CreateNoteModal';
 import { CreateAssignmentModal } from './components/modals/CreateAssignmentModal';
@@ -50,7 +52,7 @@ export const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<UserType | null>({
     id: "USR-FAC-01",
     email: "jessica.smith@university.edu",
-    fullName: "Jessica Smith",
+    fullName: "Dr. Jessica Smith",
     role: "faculty",
     department: "Computer Science",
     institutionalId: "FAC-8891"
@@ -59,6 +61,7 @@ export const App: React.FC = () => {
   // Modal states
   const [searchOpen, setSearchOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
   const [createNoteOpen, setCreateNoteOpen] = useState(false);
   const [createAssignmentOpen, setCreateAssignmentOpen] = useState(false);
   const [createQuizOpen, setCreateQuizOpen] = useState(false);
@@ -125,37 +128,51 @@ export const App: React.FC = () => {
 
   return (
     <ModernDashboardContainer>
-      {/* Top Navigation Bar matching reference design */}
+      {/* Top Navigation Bar matching reference design (Ruang Edit style) */}
       <ModernHeaderNav
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onOpenSearch={() => setSearchOpen(true)}
         onOpenAuth={() => setAuthOpen(true)}
+        onOpenContact={() => setContactOpen(true)}
         currentUser={currentUser}
       />
 
       {/* Dynamic Views based on active tab */}
-      <main className="space-y-5">
-        {activeTab === 'overview' && (
+      <main className="space-y-6">
+        {/* Home / Overview View */}
+        {(activeTab === 'overview' || activeTab === 'home') && (
           <>
-            {/* Wide Panoramic Hero Banner matching image */}
+            {/* Hero Banner matching the exact visual layout */}
             <PanoramicHeroBanner
               cohort={cohort}
               onExplore={() => setActiveTab('course-content')}
+              onOpenLiveClass={() => {
+                if (quizzes.length > 0) {
+                  setActiveQuiz(quizzes[0]);
+                  setActiveTab('quiz-room');
+                } else {
+                  setActiveTab('course-content');
+                }
+              }}
+              onOpenProgressTracking={() => setActiveTab('course-content')}
+              onOpenMentors={() => setContactOpen(true)}
             />
 
-            {/* 4-Column Modular Widget Grid matching image */}
+            {/* Modular Analytics & Action Console */}
             <ModernWidgetGrid
               setActiveTab={setActiveTab}
               onOpenCreateNote={() => setCreateNoteOpen(true)}
               onOpenCreateAssignment={() => setCreateAssignmentOpen(true)}
               onOpenCreateQuiz={() => setCreateQuizOpen(true)}
+              currentUser={currentUser}
             />
           </>
         )}
 
-        {activeTab === 'course-content' && (
-          <div className="bg-slate-900 rounded-[32px] overflow-hidden text-white">
+        {/* Classes View (Course Materials, Assignments, Quizzes) */}
+        {(activeTab === 'classes' || activeTab === 'course-content') && (
+          <div className="bg-white rounded-3xl border border-purple-100/80 shadow-sm overflow-hidden">
             <CourseContentView
               notes={notes}
               assignments={assignments}
@@ -170,18 +187,20 @@ export const App: React.FC = () => {
           </div>
         )}
 
-        {activeTab === 'quiz-room' && (
-          <div className="bg-slate-900 rounded-[32px] overflow-hidden text-white">
-            <QuizRoomView
-              quiz={activeQuiz || quizzes[0]}
+        {/* Resources View (Lecture Notes & Downloadable Decks) */}
+        {activeTab === 'resources' && (
+          <div className="bg-white rounded-3xl border border-purple-100/80 shadow-sm overflow-hidden">
+            <ResourcesView
+              notes={notes}
               currentUser={currentUser}
-              onExit={() => setActiveTab('overview')}
+              onOpenCreateNote={() => setCreateNoteOpen(true)}
             />
           </div>
         )}
 
-        {activeTab === 'risk-radar' && (
-          <div className="bg-slate-900 rounded-[32px] overflow-hidden text-white">
+        {/* Community View (Risk Radar & Student Directory) */}
+        {(activeTab === 'community' || activeTab === 'risk-radar') && (
+          <div className="bg-white rounded-3xl border border-purple-100/80 shadow-sm overflow-hidden">
             <RiskRadarView
               students={students}
               interventions={interventions}
@@ -190,22 +209,42 @@ export const App: React.FC = () => {
           </div>
         )}
 
+        {/* About Us View (System Health, Architecture, Telemetry) */}
+        {(activeTab === 'about' || activeTab === 'health') && (
+          <div className="bg-white rounded-3xl border border-purple-100/80 shadow-sm overflow-hidden">
+            <SystemHealthView />
+          </div>
+        )}
+
+        {/* Interactive Quiz Room */}
+        {activeTab === 'quiz-room' && (
+          <div className="overflow-hidden">
+            <QuizRoomView
+              quiz={activeQuiz || quizzes[0]}
+              currentUser={currentUser}
+              onExit={() => setActiveTab('course-content')}
+            />
+          </div>
+        )}
+
+        {/* Student Portal View */}
         {activeTab === 'student-portal' && (
-          <div className="bg-slate-900 rounded-[32px] overflow-hidden text-white">
+          <div className="bg-white rounded-3xl border border-purple-100/80 shadow-sm overflow-hidden">
             <StudentPortalView
               student={students[0]}
             />
           </div>
         )}
-
-        {activeTab === 'health' && (
-          <div className="bg-slate-900 rounded-[32px] overflow-hidden text-white">
-            <SystemHealthView />
-          </div>
-        )}
       </main>
 
       {/* Interactive Modals */}
+      <ContactModal
+        isOpen={contactOpen}
+        onClose={() => setContactOpen(false)}
+        currentUser={currentUser}
+        onSwitchRole={(user) => setCurrentUser(user)}
+      />
+
       <SearchModal
         isOpen={searchOpen}
         onClose={() => setSearchOpen(false)}
